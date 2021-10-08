@@ -6,7 +6,7 @@
 /*   By: pmaldagu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 10:29:24 by pmaldagu          #+#    #+#             */
-/*   Updated: 2021/10/01 17:01:23 by pmaldagu         ###   ########.fr       */
+/*   Updated: 2021/10/08 15:29:48 by pmaldagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,32 +48,7 @@ namespace ft
 			//typedef ft::reverse_iterator<iterator> const_reverse_iterator;
 			typedef ptrdiff_t difference_type;
 			typedef size_t size_type;
-
-			/*Input Iterator*/
-			/*TODO
-			template < typename Type >
-			class It: public ft::iterator<
-                        ft::random_access_iterator_tag,
-                        Type,
-                        difference_type,
-                        pointer,
-                        reference   >
-			{
-				private:
-					reference _num;
-
-				public:
-					explicit iterator(reference num = _base) : _num( *_base.address(_base) ) {}
-
-					/Member function/
-					iterator& operator++() {num + 1; return *this;}
-        			iterator operator++(int) {iterator retval = *this; ++(*this); return retval;}//////
-        			bool operator==(iterator other) const {return num == other.num;}
-        			bool operator!=(iterator other) const {return !(*this == other);}
-        			reference operator*() const {return num;}
-			}
-			*/
-
+		
 			/*Constructor and destructor*/
 			explicit vector (const allocator_type& alloc = allocator_type()) : _base( alloc ), _size( 0), _cap ( 0 )
 			{
@@ -209,14 +184,8 @@ namespace ft
 			}
 
 			/*Element acces*/
-			reference operator[]( size_type n )
-			{
-				return this->at(n);
-			}
-			//const_reference operator[](size_type n ) const //pas sur
-			//{
-			//	return const this->at(n);
-			//}
+			reference operator[]( size_type n ) { return this->at(n); }
+			const_reference operator[](size_type n ) const { return this->at(n); }
 			reference at( size_type n )
 			{
 				if ( n >= this->_size )
@@ -224,29 +193,17 @@ namespace ft
 				else
 					return *(this->_ptr + n);
 			}
-			//const_reference at( size_type n )
-			//{
-			//	if ( n >= this->_size )
-			//		throw std::out_of_range;
-			//	else
-			//		return const *(this->_ptr + n);
-			//}
-			reference front( void )
+			const_reference at( size_type n ) const
 			{
-				return this->_ptr;
+				if ( n >= this->_size )
+					throw std::out_of_range;
+				else
+					return *(this->_ptr + n);
 			}
-			//const_reference front( size_type n )
-			//{
-			//	return const *(this->_ptr);
-			//}
-			reference back( void )
-			{
-				return *(this->_ptr + this->_size - 1);
-			}
-			//const_reference back( size_type n );
-			//{
-			//	return const *(ptr + this->_size);
-			//}
+			reference front( void ) { return *(this->_ptr); }
+			const_reference front( size_type n ) const { return *(this->_ptr); }
+			reference back( void ) { return *(this->_ptr + this->_size - 1); }
+			const_reference back( size_type n ) const { return *(this->_ptr + this->_size - 1); }
 
 			/*Modifiers*/
 			/*TODO*/
