@@ -6,7 +6,7 @@
 /*   By: pmaldagu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 10:29:24 by pmaldagu          #+#    #+#             */
-/*   Updated: 2021/10/08 15:29:48 by pmaldagu         ###   ########.fr       */
+/*   Updated: 2021/10/08 16:57:52 by pmaldagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,14 +118,8 @@ namespace ft
 			*/
 
 			/*Capacity*/
-			size_t size( void ) const
-			{
-				return this->_size;
-			}
-			size_t max_size( void ) const
-			{
-				return this->_base.max_size();
-			}
+			size_t size( void ) const { return this->_size; }
+			size_t max_size( void ) const { return this->_base.max_size(); }
 			void resize( size_type n, value_type val = value_type() )
 			{
 				size_t i;
