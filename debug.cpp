@@ -33,5 +33,11 @@ int main()
 	std::cout << "cap = " << vec.capacity() << std::endl;
 	std::cout << "size = " << vec.size() << std::endl;
 	std::cout << "it = " << *it << std::endl;
+
+	vec.assign(2, "lol");
+	std::cout << "cap = " << vec.capacity() << std::endl;
+	std::cout << "size = " << vec.size() << std::endl;
+	std::cout << "it = " << *it << std::endl;
+
 	return 0;
 }

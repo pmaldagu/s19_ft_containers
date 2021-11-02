@@ -6,7 +6,7 @@
 /*   By: pmaldagu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 10:29:24 by pmaldagu          #+#    #+#             */
-/*   Updated: 2021/10/20 16:41:44 by pmaldagu         ###   ########.fr       */
+/*   Updated: 2021/10/28 13:39:32 by pmaldagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 
 #include <stdexcept>
 #include <iostream>
+#include "iterator.hpp"
+#include "utils.hpp"
 
 namespace ft
 {
@@ -67,15 +69,19 @@ namespace ft
 					i++;
 				}
 			}
-			/*TODO
 			template <class InputIterator>
-         	vector (InputIterator first, InputIterator last,
-                 const allocator_type& alloc = allocator_type());
-			{
-				first::pointer begin;
-				last::pointer end;
-			}
-			*/
+            vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(), 
+					typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = nullptr) : 
+						_base(alloc), _size(0), _maxSize(0) 
+            {
+                for (; first < last; first++)
+                    this->_size++;
+                this->_maxSize = this->_size;
+                first -= _size;
+                this->_ptr = this->_base.allocate(this->_size);
+                for (size_t a = 0; a < this->_size; a++)
+                    this->_base.construct(_ptr + a, *(first + a));
+            }
 			vector (const vector& x) : _base( x._base ), _size( x._size ), _cap( x ._cap ), _ptr( x._ptr ) {}
 			virtual~vector( void )
 			{
@@ -89,7 +95,7 @@ namespace ft
 				size_t i;
 
 				i = 0;
-				if (*this != &x)
+				if (this != &x)
 				{
 					this->clear();
 					this->_base.deallocate(this->_ptr, this->_cap);
@@ -188,20 +194,36 @@ namespace ft
 			const_reference at( size_type n ) const
 			{
 				if ( n >= this->_size )
-					throw std::out_of_range;
+					throw std::out_of_range("vector");
 				else
 					return *(this->_ptr + n);
 			}
 			reference front( void ) { return *(this->_ptr); }
-			const_reference front( size_type n ) const { return *(this->_ptr); }
+			const_reference front( void ) const { return *(this->_ptr); }
 			reference back( void ) { return *(this->_ptr + this->_size - 1); }
-			const_reference back( size_type n ) const { return *(this->_ptr + this->_size - 1); }
+			const_reference back( void ) const { return *(this->_ptr + this->_size - 1); }
 
 			/*Modifiers*/
-			/*TODO*/
-			//template <class InputIterator>
-  			//void assign( InputIterator first, InputIterator last);
-			//void assign( size_type n, const value_type & val );
+			template <class InputIterator>
+            void assign(InputIterator first, InputIterator last, 
+					typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = nullptr)
+            {
+                clear();
+                insert(begin(), first, last);
+                this->_maxSize = _size;
+            }
+			void assign( size_type n, const value_type & val )
+			{
+				size_t i;
+
+				i = 0;
+				this->clear()
+				while (i < n)
+				{
+					this->_base.push_back(val)
+					i++;
+				}
+			}
 			void push_back( const value_type & val )
 			{
 				if (this->_size == this->_cap)
@@ -219,18 +241,69 @@ namespace ft
 					this->_base.destroy(this->_ptr + this->_size);
 				}
 			}
+			template <class InputIterator>
+            void insert(iterator position, InputIterator first, InputIterator last, 
+					typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = nullptr)
+            {
+                iterator it = position;
 
-			//iterator insert( iterator position, const value_type & val );
-			//void insert( iterator position, size_type n, const value_type & val );
-			//template <class InputIterator>
-    		//void insert( iterator position, InputIterator first, InputIterator last );
-			iterator erase( iterator position );
-			{
-				if (pos == this->size - 1)
-					return this->end();
+                for (; first < last; first++)
+                {
+                    it = insert(it, *first);
+                    it++;
+                }
+            }
+            iterator erase(iterator position)
+            {
+				/*
+                iterator it;
+                size_t a = 0;
+                this->_size--;
+                for (it = this->begin(); it < position; it++)
+                    a++;
+                for (; a < this->_size; a++)
+                    this->_ptr[a] = this->_ptr[a + 1];
+                if (position == this->end() + 1)
+                    return (this->end());
+                return (position);
+				*/
+                iterator it;
+                vector tmp;
+                size_t a = 0;
+                size_t b = 0;
 
-			//iterator erase( iterator first, iterator last );
-			//void swap( vector & x );
+                if (position == this->end())
+                    return (this->end());
+                tmp = *this;
+                tmp._size--;
+                this->clear();
+                for (it = tmp.begin(); it < position; it++)
+                    a++;
+                for (; b < tmp._size; b++)
+                {
+                    if (b != a)
+                        this->_base.construct(this->_ptr + b, *(tmp._ptr + b));
+                }
+                this->_size = tmp._size;
+                this->_maxSize = tmp._maxSize;
+                return (position);
+            }
+			void swap(vector& x)
+            {
+                pointer tmp;
+                size_t  tmp2;
+                size_t  tmp3;
+
+                tmp = this->_ptr;
+                tmp2 = this->_size;
+                tmp3 = this->_maxSize;
+                this->_ptr = x._ptr;
+                this->_size = x._size;
+                this->_maxSize = x._maxSize;
+                x._ptr = tmp;
+                x._size = tmp2;
+                x._maxSize = tmp3;
+            }
 			void clear( void )
 			{				
 				size_t i;
@@ -264,7 +337,7 @@ namespace ft
             return false;
 		while (i < size)
 		{
-            if (lhs[a] != rhs[a])
+            if (lhs[i] != rhs[i])
                 return false;
 			i++;
         }
