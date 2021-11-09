@@ -6,7 +6,7 @@
 /*   By: pmaldagu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/22 12:26:02 by pmaldagu          #+#    #+#             */
-/*   Updated: 2021/10/28 13:41:11 by pmaldagu         ###   ########.fr       */
+/*   Updated: 2021/11/05 13:53:48 by pmaldagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ namespace ft
 			reverse_iterator  operator--(int) { reverse_iterator tmp(*this); this->current++; return tmp; }
 			reverse_iterator& operator-=(difference_type n) { current += n; return *this; }
 			pointer operator->() const { return &(operator*()); }
-			reference operator[](difference_type n) const { return this->current[-n]; }
+			reference operator[](difference_type n) const { return this->current[-n - 1]; }
 
 		protected:
 			iterator_type current;

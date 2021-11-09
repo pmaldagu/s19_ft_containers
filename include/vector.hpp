@@ -6,7 +6,7 @@
 /*   By: pmaldagu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 10:29:24 by pmaldagu          #+#    #+#             */
-/*   Updated: 2021/10/28 13:39:32 by pmaldagu         ###   ########.fr       */
+/*   Updated: 2021/11/05 16:14:03 by pmaldagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,10 +116,10 @@ namespace ft
             const_iterator begin() const { return (const_iterator(this->_ptr)); }
             iterator end() { return (iterator(this->_ptr + this->_size)); }
             const_iterator end() const { return (const_iterator(this->_ptr + this->_size)); }
-            reverse_iterator rbegin() { return (reverse_iterator(this->_ptr + this->_size)); }
-            const_reverse_iterator rbegin() const { return (const_reverse_iterator(this->_ptr + this->_size)); }
-            reverse_iterator rend() { return (reverse_iterator(this->_ptr)); }
-            const_reverse_iterator rend() const { return (const_reverse_iterator(this->_ptr)); }
+            reverse_iterator rbegin() { return (reverse_iterator(this->end())); }
+            const_reverse_iterator rbegin() const { return (const_reverse_iterator(this->end())); }
+            reverse_iterator rend() { return (reverse_iterator(this->begin())); }
+            const_reverse_iterator rend() const { return (const_reverse_iterator(this->begin())); }
 		
 			/*Capacity*/
 			size_t size( void ) const { return this->_size; }
