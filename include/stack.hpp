@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   stack.hpp                                           :+:      :+:    :+:   */
+/*   stack.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pmaldagu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 10:39:06 by pmaldagu          #+#    #+#             */
-/*   Updated: 2021/10/01 11:47:24 by pmaldagu         ###   ########.fr       */
+/*   Updated: 2021/12/04 16:27:31 by pmaldagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,15 @@
 #ifndef STACK_HPP
 #define STACK_HPP
 
-#include <iostream>
-#include <deque>
+#include "vector.hpp"
 
 namespace ft
 {
-	template < typename T, typename Container = std::deque<T> >//////a changer pour ft::vector
+	template < typename T, typename Container = ft::vector<T> >
 	class stack
 	{
 
-		/*Friendzone (cause lexicographical_compare, non-local)*/
+		/* Friendzone (cause lexicographical_compare, non-local) */
 		friend bool operator==( const stack & lhs, const stack & rhs)
 		{
 			return (lhs.c == rhs.c);
@@ -55,17 +54,16 @@ namespace ft
 		}
 
 		public:
-			/*Constructor and Destructor*/
-			explicit stack( const Container & cont = Container() );
-			stack ( const stack & other );
-			virtual~stack();
+			/* Constructor & Destructor */
+			explicit stack( const Container & cont = Container() ): c(cont) {}
+			~stack() {}
 
-			/*Member types*/
+			/* Member types */
 			typedef typename Container::value_type value_type;
 			typedef Container container_type;
 			typedef typename Container::size_type size_type;
 
-			/*Member functions*/
+			/* Member functions */
 			stack & operator=( const stack & other )
 			{
 				if (*this != &other)
@@ -102,22 +100,8 @@ namespace ft
 		protected:
 			Container c;
 
-	};/*end of Class*/
+	};/* End of Class */
 
-	/*Constructor and Destructor*/
-	template < typename T, typename Container >
-	stack<T, Container>::stack( const container_type& cont ) :
-	c( cont )
-	{
-		std::cout << "stack parametric constructor called" << std::endl;
-	}
-
-	template < typename T, typename Container >
-	stack<T, Container>::~stack( void )
-	{
-		std::cout << "stack destructor called" << std::endl;
-	}
-
-}/*end of the namespace*/
+}/* End of the namespace */
 
 #endif

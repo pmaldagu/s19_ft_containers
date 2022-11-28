@@ -6,7 +6,7 @@
 /*   By: pmaldagu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 13:51:48 by pmaldagu          #+#    #+#             */
-/*   Updated: 2021/10/29 16:11:46 by pmaldagu         ###   ########.fr       */
+/*   Updated: 2022/01/04 14:04:30 by pmaldagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,159 @@
 //https://stackoverflow.com/questions/43571962/how-is-stdis-integral-implemented
 //https://stackoverflow.com/questions/58694521/what-is-stdfalse-type-or-stdtrue-type
 
+#include <memory>
+
 namespace ft
 {
-	/*Lexicographical compare*/
+    /* nullptr for std98 */
+    static class nullptr_t
+    {
+        public:
+            template<class T>
+            operator T*() const { return (0); }
+            template<class C, class T>
+            operator T C::*() const { return (0); }
+
+        private:
+            void operator&() const;
+
+    }           u_nullptr = {};
+
+    /* Node */
+	template < class T >
+    struct Node
+    {
+        typedef T   value_type;
+
+        value_type  data;
+        Node*       parent;
+        Node*       left;
+        Node*       right;
+        int         color;
+
+        Node(): data(value_type()), parent(u_nullptr), left(u_nullptr), right(u_nullptr), color(0) {}
+        Node(const value_type& val): data(val), parent(u_nullptr), left(u_nullptr), right(u_nullptr), color(0) {}
+		template < class U >
+        Node(const Node<U>& cpy): 
+			data(cpy.data), parent(cpy.parent), left(cpy.left), right(cpy.right), color(cpy.color) {}
+        ~Node() {}
+		
+		template < class U >
+        Node& operator=(const Node<U>& cpy)
+        {
+            if (this != &cpy)
+            {
+                this->data = cpy.data;
+                this->parent = cpy.parent;
+                this->left = cpy.left;
+                this->right = cpy.right;
+                this->color = cpy.color;
+            }
+            return (*this);
+        }
+    };
+
+    /* pair and make_pair */
+    template < class T1, class T2 >
+    struct pair
+    {
+        typedef T1  first_type;
+        typedef T2  second_type;
+
+        first_type  first;
+        second_type second;
+
+        pair(): first(first_type()), second(second_type()) {}
+        template<class U, class V>
+        pair (const pair<U,V>& pr): first(pr.first), second(pr.second) {}
+        pair (const first_type& a, const second_type& b)
+		{
+			first = a;
+			second = b;
+		}
+        pair& operator=(const pair& pr)
+        {
+            if (this != &pr)
+            {
+                first = pr.first;
+                second = pr.second;
+            }
+            return (*this);
+        }
+    };
+
+    /* Non member function pair */
+    template <class T1, class T2>
+    bool operator== (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) 
+	{ 
+		return lhs.first==rhs.first && lhs.second==rhs.second; 
+	}
+    template <class T1, class T2>
+    bool operator!= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return !(lhs==rhs); }
+    template <class T1, class T2>
+    bool operator<  (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) 
+	{ 
+		return lhs.first<rhs.first || (!(rhs.first<lhs.first) && lhs.second<rhs.second); 
+	}
+    template <class T1, class T2>
+    bool operator<= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return !(rhs<lhs); }
+    template <class T1, class T2>
+    bool operator>  (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return rhs<lhs; }
+    template <class T1, class T2>
+    bool operator>= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs) { return !(lhs<rhs); }
+    template < class T1, class T2 >
+    pair<T1,T2> make_pair(T1 x, T2 y)
+    {
+        return (pair<T1,T2>(x, y));
+    }
+
+    /* less */
+    template < class Arg1, class Arg2, class Result >
+    struct binary_function
+    {
+        typedef Arg1    first_argument_type;
+        typedef Arg2    second_argument_type;
+        typedef Result  result_type;
+    };
+
+    template < class T >
+    struct less : binary_function <T, T, bool>
+    {
+        typedef T       first_argument_type;
+        typedef T       second_argument_type;
+        typedef bool    result_type;
+
+        bool operator() (const T& x, const T& y) const { return x < y; }
+    };
+    
+	/* Equal */
+    template <class InputIterator1, class InputIterator2>
+    bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2)
+    {
+        while (first1!=last1)
+        {
+            if (!(*first1 == *first2))
+                return false;
+            ++first1; ++first2;
+        }
+        return true;
+    }
+
+    template <class InputIterator1, class InputIterator2, class BinaryPredicate>
+    bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, BinaryPredicate pred)
+    {
+        while (first1!=last1)
+        {
+            if (!pred(*first1,*first2))
+                return false;
+            ++first1; ++first2;
+        }
+        return true;
+    }
+
+    /* Lexicographical compare */
 	template<class InputIt1, class InputIt2>
-	bool lexicographical_compare(InputIt1 first1, InputIt1 last1,
-                             InputIt2 first2, InputIt2 last2)
+	bool lexicographical_compare(InputIt1 first1, InputIt1 last1, InputIt2 first2, InputIt2 last2)
 	{
     	for ( ; (first1 != last1) && (first2 != last2); ++first1, (void) ++first2 )
 		{
@@ -30,11 +177,9 @@ namespace ft
         	if (*first2 < *first1) return false;
     	}
     	return (first1 == last1) && (first2 != last2);
-	};
+	}
 	template<class InputIt1, class InputIt2, class Compare>
-	bool lexicographical_compare(InputIt1 first1, InputIt1 last1,
-                             InputIt2 first2, InputIt2 last2,
-                             Compare comp)
+	bool lexicographical_compare(InputIt1 first1, InputIt1 last1, InputIt2 first2, InputIt2 last2, Compare comp)
 	{
     	for ( ; (first1 != last1) && (first2 != last2); ++first1, (void) ++first2 ) 
 		{
@@ -44,15 +189,15 @@ namespace ft
     	return (first1 == last1) && (first2 != last2);
 	}
 
-	/*Enable if*/
-	template<bool B, class T = void>
-	struct enable_if {};
+    /* Enable if */ //https://h-deb.clg.qc.ca/Sujets/TrucsScouts/Comprendre_enable_if.html
+    template<bool B, class T = void>
+    struct enable_if {};
+ 
+    template<class T>
+    struct enable_if<true, T> { typedef T type; };
 
-	template<class T>
-	struct enable_if<true, T> { typedef T type; };
-
-	/*Is_integral*/
-	struct integral_constant
+    template <class T, T v>
+    struct integral_constant
     {
         static const T value = v;   // true or false vu qu'on passe un bool
         typedef T value_type;
@@ -93,31 +238,6 @@ namespace ft
     template<> struct is_integral<const unsigned int> : public ft::integral_constant<bool, true> {};
     template<> struct is_integral<const unsigned long int> : public ft::integral_constant<bool, true> {};
     template<> struct is_integral<const unsigned long long int> : public ft::integral_constant<bool, true> {};
-
-	/*pair*/
-    template <class T1, class T2>
-    struct pair
-    {
-        typedef T1 first_type;
-        typedef T2 second_type;
-
-        T1 first;
-        T2 second;
-    };
-
-	/*less*/
-	template< class T >
-	struct less
-	{
-		typedef bool	result_type;
-		typedef T		first_argument_type;
-		typedef T 		second_argument_type;
-
-		bool operator()(const T &lhs, const T &rhs) const
-		{
-    		return lhs < rhs; // assumes that the implementation uses a flat address space
-		}
-	};	
 }
 
 #endif
